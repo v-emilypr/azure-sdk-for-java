@@ -82,27 +82,6 @@ jobs:
               SubscriptionConfiguration: $(SubscriptionConfiguration)
               ArmTemplateParameters: $(ArmTemplateParameters)
 
-      - ${{ parameters.PreSteps }}
-
-      - template: /eng/pipelines/templates/steps/build-and-test.yml
-        parameters:
-          SDKType: ${{ parameters.SDKType }}
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          ParallelTestPlayback: 'false'
-          SkipAggregateReports: 'true'
-          BuildParallelization: ${{ parameters.BuildParallelization }}
-          IsLiveTest: true
-          TestGoals: ${{ parameters.TestGoals }}
-          TestOptions: ${{ parameters.TestOptions }}
-          AdditionalBuildOptions: ${{ parameters.AdditionalBuildOptions }}
-          TestParallelization: ${{ parameters.TestParallelization }}
-          TestEnvVars:
-            AZURE_TEST_MODE: ${{ parameters.TestMode }}
-            ${{ each var in parameters.EnvVars }}:
-              ${{ var.key }}: ${{ var.value }}
-
-      - ${{ parameters.PostSteps }}
-
       - ${{ if ne(parameters.DisableAzureResourceCreation, 'true') }}:
         - ${{ if parameters.TestResourceDirectories }}:
           - ${{ each directory in parameters.TestResourceDirectories }}:
