@@ -1,6 +1,15 @@
 # Release History
 
-## 4.4.0 (2022-03-31) 
+## 4.4.1 (2022-04-06)
+
+### Other Changes
+
+#### Dependency Updates
+
+- Upgraded `azure-core` from `1.26.0` to version `1.27.0`.
+- Upgraded `azure-core-http-netty` from `1.11.8` to version `1.11.9`.
+
+## 4.4.0 (2022-03-31)
 
 ### Features Added
 - Added support for service version `7.3`.
