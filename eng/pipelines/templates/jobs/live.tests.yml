@@ -89,7 +89,6 @@ jobs:
               parameters:
                 ServiceDirectory: '${{ directory }}'
                 SubscriptionConfiguration: $(SubscriptionConfiguration)
-                ResourceGroupName: '${{ directory }}_RESOURCE_GROUP'
         - ${{ if not(parameters.TestResourceDirectories) }}:
           - template: /eng/common/TestResources/remove-test-resources.yml
             parameters:
