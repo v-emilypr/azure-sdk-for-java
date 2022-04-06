@@ -1,5 +1,19 @@
 ## Release History
 
+## 4.28.1 (2022-04-06)
+
+### Other Changes
+
+#### Dependency Updates
+
+- Upgraded `jackson-module-afterburner` from `2.12.5` to version `2.13.2`.
+- Upgraded `azure-core-http-netty` from `1.11.8` to version `1.11.9`.
+- Upgraded `azure-core` from `1.26.0` to version `1.27.0`.
+- Upgraded `jackson-annotations` from `2.13.1` to version `2.13.2`.
+- Upgraded `jackson-databind` from `2.13.1` to version `2.13.2.1`.
+- Upgraded `jackson-datatype-jsr310` from `2.13.1` to version `2.13.2`.
+- Upgraded `jackson-core` from `2.13.1` to version `2.13.2`.
+
 ### 4.28.0 (2022-03-18)
 #### Features Added
 * Added the "VM Unique ID" - see [Accessing and Using Azure VM Unique ID](https://azure.microsoft.com/blog/accessing-and-using-azure-vm-unique-id/) - to the request diagnostics. This information helps to simplify investigating any network issues between an application hosted in Azure and the corresponding Cosmos DB service endpoint. - See [PR 27692](https://github.com/Azure/azure-sdk-for-java/pull/27692)
