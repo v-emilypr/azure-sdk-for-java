@@ -67,7 +67,7 @@ public final class DataLakePathClientBuilder implements
     ConfigurationTrait<DataLakePathClientBuilder>,
     EndpointTrait<DataLakePathClientBuilder> {
 
-    private static final ClientLogger LOGGER = new ClientLogger(DataLakePathClientBuilder.class);
+    private final ClientLogger logger = new ClientLogger(DataLakePathClientBuilder.class);
     private final BlobClientBuilder blobClientBuilder;
 
     private String endpoint;
@@ -78,11 +78,12 @@ public final class DataLakePathClientBuilder implements
     private StorageSharedKeyCredential storageSharedKeyCredential;
     private TokenCredential tokenCredential;
     private AzureSasCredential azureSasCredential;
+    private String sasToken;
 
     private HttpClient httpClient;
     private final List<HttpPipelinePolicy> perCallPolicies = new ArrayList<>();
     private final List<HttpPipelinePolicy> perRetryPolicies = new ArrayList<>();
-    private HttpLogOptions logOptions;
+    private HttpLogOptions logOptions = new HttpLogOptions();
     private RequestRetryOptions retryOptions;
     private RetryOptions coreRetryOptions;
     private HttpPipeline httpPipeline;
@@ -162,12 +163,12 @@ public final class DataLakePathClientBuilder implements
         DataLakeServiceVersion serviceVersion = version != null ? version : DataLakeServiceVersion.getLatest();
 
         HttpPipeline pipeline = (httpPipeline != null) ? httpPipeline : BuilderHelper.buildPipeline(
-            storageSharedKeyCredential, tokenCredential, azureSasCredential,
+            storageSharedKeyCredential, tokenCredential, azureSasCredential, sasToken,
             endpoint, retryOptions, coreRetryOptions, logOptions,
-            clientOptions, httpClient, perCallPolicies, perRetryPolicies, configuration, LOGGER);
+            clientOptions, httpClient, perCallPolicies, perRetryPolicies, configuration, logger);
 
         return new DataLakeFileAsyncClient(pipeline, endpoint, serviceVersion, accountName, dataLakeFileSystemName,
-            pathName, blobClientBuilder.buildAsyncClient().getBlockBlobAsyncClient(), azureSasCredential);
+            pathName, blobClientBuilder.buildAsyncClient().getBlockBlobAsyncClient());
     }
 
     /**
@@ -228,12 +229,12 @@ public final class DataLakePathClientBuilder implements
         DataLakeServiceVersion serviceVersion = version != null ? version : DataLakeServiceVersion.getLatest();
 
         HttpPipeline pipeline = (httpPipeline != null) ? httpPipeline : BuilderHelper.buildPipeline(
-            storageSharedKeyCredential, tokenCredential, azureSasCredential, endpoint,
+            storageSharedKeyCredential, tokenCredential, azureSasCredential, sasToken, endpoint,
             retryOptions, coreRetryOptions, logOptions,
-            clientOptions, httpClient, perCallPolicies, perRetryPolicies, configuration, LOGGER);
+            clientOptions, httpClient, perCallPolicies, perRetryPolicies, configuration, logger);
 
         return new DataLakeDirectoryAsyncClient(pipeline, endpoint, serviceVersion, accountName, dataLakeFileSystemName,
-            pathName, blobClientBuilder.buildAsyncClient().getBlockBlobAsyncClient(), azureSasCredential);
+            pathName, blobClientBuilder.buildAsyncClient().getBlockBlobAsyncClient());
     }
 
     /**
@@ -247,7 +248,7 @@ public final class DataLakePathClientBuilder implements
         blobClientBuilder.credential(credential);
         this.storageSharedKeyCredential = Objects.requireNonNull(credential, "'credential' cannot be null.");
         this.tokenCredential = null;
-        this.azureSasCredential = null;
+        this.sasToken = null;
         return this;
     }
 
@@ -278,7 +279,7 @@ public final class DataLakePathClientBuilder implements
         blobClientBuilder.credential(credential);
         this.tokenCredential = Objects.requireNonNull(credential, "'credential' cannot be null.");
         this.storageSharedKeyCredential = null;
-        this.azureSasCredential = null;
+        this.sasToken = null;
         return this;
     }
 
@@ -292,8 +293,8 @@ public final class DataLakePathClientBuilder implements
      */
     public DataLakePathClientBuilder sasToken(String sasToken) {
         blobClientBuilder.sasToken(sasToken);
-        this.azureSasCredential = new AzureSasCredential(Objects.requireNonNull(sasToken,
-            "'sasToken' cannot be null."));
+        this.sasToken = Objects.requireNonNull(sasToken,
+            "'sasToken' cannot be null.");
         this.storageSharedKeyCredential = null;
         this.tokenCredential = null;
         return this;
@@ -326,6 +327,7 @@ public final class DataLakePathClientBuilder implements
         this.storageSharedKeyCredential = null;
         this.tokenCredential = null;
         this.azureSasCredential = null;
+        this.sasToken = null;
         return this;
     }
 
@@ -365,8 +367,8 @@ public final class DataLakePathClientBuilder implements
                 this.sasToken(sasToken);
             }
         } catch (MalformedURLException ex) {
-            throw LOGGER.logExceptionAsError(
-                new IllegalArgumentException("The Azure Storage DataLake endpoint url is malformed.", ex));
+            throw logger.logExceptionAsError(
+                new IllegalArgumentException("The Azure Storage DataLake endpoint url is malformed."));
         }
         return this;
     }
@@ -416,7 +418,7 @@ public final class DataLakePathClientBuilder implements
     public DataLakePathClientBuilder httpClient(HttpClient httpClient) {
         blobClientBuilder.httpClient(httpClient);
         if (this.httpClient != null && httpClient == null) {
-            LOGGER.info("'httpClient' is being set to 'null' when it was previously configured.");
+            logger.info("'httpClient' is being set to 'null' when it was previously configured.");
         }
 
         this.httpClient = httpClient;
@@ -576,7 +578,7 @@ public final class DataLakePathClientBuilder implements
     public DataLakePathClientBuilder pipeline(HttpPipeline httpPipeline) {
         blobClientBuilder.pipeline(httpPipeline);
         if (this.httpPipeline != null && httpPipeline == null) {
-            LOGGER.info("HttpPipeline is being set to 'null' when it was previously configured.");
+            logger.info("HttpPipeline is being set to 'null' when it was previously configured.");
         }
 
         this.httpPipeline = httpPipeline;

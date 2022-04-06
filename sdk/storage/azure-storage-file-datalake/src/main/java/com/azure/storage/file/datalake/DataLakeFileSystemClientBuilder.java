@@ -63,7 +63,7 @@ public class DataLakeFileSystemClientBuilder implements
     HttpTrait<DataLakeFileSystemClientBuilder>,
     ConfigurationTrait<DataLakeFileSystemClientBuilder>,
     EndpointTrait<DataLakeFileSystemClientBuilder> {
-    private static final ClientLogger LOGGER = new ClientLogger(DataLakeFileSystemClientBuilder.class);
+    private final ClientLogger logger = new ClientLogger(DataLakeFileSystemClientBuilder.class);
 
     private final BlobContainerClientBuilder blobContainerClientBuilder;
 
@@ -74,6 +74,7 @@ public class DataLakeFileSystemClientBuilder implements
     private StorageSharedKeyCredential storageSharedKeyCredential;
     private TokenCredential tokenCredential;
     private AzureSasCredential azureSasCredential;
+    private String sasToken;
 
     private HttpClient httpClient;
     private final List<HttpPipelinePolicy> perCallPolicies = new ArrayList<>();
@@ -149,12 +150,12 @@ public class DataLakeFileSystemClientBuilder implements
         DataLakeServiceVersion serviceVersion = version != null ? version : DataLakeServiceVersion.getLatest();
 
         HttpPipeline pipeline = (httpPipeline != null) ? httpPipeline : BuilderHelper.buildPipeline(
-            storageSharedKeyCredential, tokenCredential, azureSasCredential,
+            storageSharedKeyCredential, tokenCredential, azureSasCredential, sasToken,
             endpoint, retryOptions, coreRetryOptions, logOptions,
-            clientOptions, httpClient, perCallPolicies, perRetryPolicies, configuration, LOGGER);
+            clientOptions, httpClient, perCallPolicies, perRetryPolicies, configuration, logger);
 
         return new DataLakeFileSystemAsyncClient(pipeline, endpoint, serviceVersion, accountName,
-            dataLakeFileSystemName, blobContainerClientBuilder.buildAsyncClient(), azureSasCredential);
+            dataLakeFileSystemName, blobContainerClientBuilder.buildAsyncClient());
     }
 
     /**
@@ -183,8 +184,8 @@ public class DataLakeFileSystemClientBuilder implements
                 this.sasToken(sasToken);
             }
         } catch (MalformedURLException ex) {
-            throw LOGGER.logExceptionAsError(
-                new IllegalArgumentException("The Azure Storage Datalake endpoint url is malformed.", ex));
+            throw logger.logExceptionAsError(
+                new IllegalArgumentException("The Azure Storage Datalake endpoint url is malformed."));
         }
 
         return this;
@@ -201,7 +202,7 @@ public class DataLakeFileSystemClientBuilder implements
         blobContainerClientBuilder.credential(credential);
         this.storageSharedKeyCredential = Objects.requireNonNull(credential, "'credential' cannot be null.");
         this.tokenCredential = null;
-        this.azureSasCredential = null;
+        this.sasToken = null;
         return this;
     }
 
@@ -232,7 +233,7 @@ public class DataLakeFileSystemClientBuilder implements
         blobContainerClientBuilder.credential(credential);
         this.tokenCredential = Objects.requireNonNull(credential, "'credential' cannot be null.");
         this.storageSharedKeyCredential = null;
-        this.azureSasCredential = null;
+        this.sasToken = null;
         return this;
     }
 
@@ -246,8 +247,8 @@ public class DataLakeFileSystemClientBuilder implements
      */
     public DataLakeFileSystemClientBuilder sasToken(String sasToken) {
         blobContainerClientBuilder.sasToken(sasToken);
-        this.azureSasCredential = new AzureSasCredential(Objects.requireNonNull(sasToken,
-            "'sasToken' cannot be null."));
+        this.sasToken = Objects.requireNonNull(sasToken,
+            "'sasToken' cannot be null.");
         this.storageSharedKeyCredential = null;
         this.tokenCredential = null;
         return this;
@@ -280,6 +281,7 @@ public class DataLakeFileSystemClientBuilder implements
         this.storageSharedKeyCredential = null;
         this.tokenCredential = null;
         this.azureSasCredential = null;
+        this.sasToken = null;
         return this;
     }
 
@@ -313,7 +315,7 @@ public class DataLakeFileSystemClientBuilder implements
     public DataLakeFileSystemClientBuilder httpClient(HttpClient httpClient) {
         blobContainerClientBuilder.httpClient(httpClient);
         if (this.httpClient != null && httpClient == null) {
-            LOGGER.info("'httpClient' is being set to 'null' when it was previously configured.");
+            logger.info("'httpClient' is being set to 'null' when it was previously configured.");
         }
 
         this.httpClient = httpClient;
@@ -447,7 +449,7 @@ public class DataLakeFileSystemClientBuilder implements
     public DataLakeFileSystemClientBuilder pipeline(HttpPipeline httpPipeline) {
         blobContainerClientBuilder.pipeline(httpPipeline);
         if (this.httpPipeline != null && httpPipeline == null) {
-            LOGGER.info("HttpPipeline is being set to 'null' when it was previously configured.");
+            logger.info("HttpPipeline is being set to 'null' when it was previously configured.");
         }
 
         this.httpPipeline = httpPipeline;

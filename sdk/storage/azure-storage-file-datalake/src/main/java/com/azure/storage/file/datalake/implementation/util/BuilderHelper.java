@@ -61,6 +61,7 @@ public final class BuilderHelper {
      * @param storageSharedKeyCredential {@link StorageSharedKeyCredential} if present.
      * @param tokenCredential {@link TokenCredential} if present.
      * @param azureSasCredential {@link AzureSasCredential} if present.
+     * @param sasToken The sas token if present.
      * @param endpoint The endpoint for the client.
      * @param retryOptions Storage retry options to set in the retry policy.
      * @param coreRetryOptions Core retry options to set in the retry policy.
@@ -75,14 +76,14 @@ public final class BuilderHelper {
      */
     public static HttpPipeline buildPipeline(
         StorageSharedKeyCredential storageSharedKeyCredential,
-        TokenCredential tokenCredential, AzureSasCredential azureSasCredential, String endpoint,
+        TokenCredential tokenCredential, AzureSasCredential azureSasCredential, String sasToken, String endpoint,
         RequestRetryOptions retryOptions, RetryOptions coreRetryOptions,
         HttpLogOptions logOptions, ClientOptions clientOptions, HttpClient httpClient,
         List<HttpPipelinePolicy> perCallPolicies, List<HttpPipelinePolicy> perRetryPolicies,
         Configuration configuration, ClientLogger logger) {
 
         CredentialValidator.validateSingleCredentialIsPresent(
-            storageSharedKeyCredential, tokenCredential, azureSasCredential, null, logger);
+            storageSharedKeyCredential, tokenCredential, azureSasCredential, sasToken, logger);
 
         // Closest to API goes first, closest to wire goes last.
         List<HttpPipelinePolicy> policies = new ArrayList<>();
@@ -113,6 +114,8 @@ public final class BuilderHelper {
             credentialPolicy =  new BearerTokenAuthenticationPolicy(tokenCredential, Constants.STORAGE_SCOPE);
         } else if (azureSasCredential != null) {
             credentialPolicy = new AzureSasCredentialPolicy(azureSasCredential, false);
+        } else if (sasToken != null) {
+            credentialPolicy = new AzureSasCredentialPolicy(new AzureSasCredential(sasToken), false);
         } else {
             credentialPolicy =  null;
         }
