@@ -134,25 +134,26 @@ if (!$ResourceGroupName) {
     if ($CI) {
         $envVarName = (BuildServiceDirectoryPrefix (GetServiceName $ServiceDirectory)) + "RESOURCE_GROUP"
         $ResourceGroupName = [Environment]::GetEnvironmentVariable($envVarName)
+        Log "BBP e $envVarName"
+        Log "BBP rg $ResourceGroupName"
         if (!$ResourceGroupName) {
             Write-Error "Could not find resource group name environment variable '$envVarName'"
             exit 1
         }
-        return
+    } else {
+        # Make sure $BaseName is set.
+        if (!$BaseName) {
+            $UserName = if ($env:USER) { $env:USER } else { "${env:USERNAME}" }
+            # Remove spaces, etc. that may be in $UserName
+            $UserName = $UserName -replace '\W'
+
+            $BaseName = "$UserName$ServiceDirectory"
+            Log "BaseName was not set. Using default base name '$BaseName'"
+        }
+
+        # Format the resource group name like in New-TestResources.ps1.
+        $ResourceGroupName = "rg-$BaseName"
     }
-
-    # Make sure $BaseName is set.
-    if (!$BaseName) {
-        $UserName = if ($env:USER) { $env:USER } else { "${env:USERNAME}" }
-        # Remove spaces, etc. that may be in $UserName
-        $UserName = $UserName -replace '\W'
-
-        $BaseName = "$UserName$ServiceDirectory"
-        Log "BaseName was not set. Using default base name '$BaseName'"
-    }
-
-    # Format the resource group name like in New-TestResources.ps1.
-    $ResourceGroupName = "rg-$BaseName"
 }
 
 # If no subscription was specified, try to select the Azure SDK Developer Playground subscription.
