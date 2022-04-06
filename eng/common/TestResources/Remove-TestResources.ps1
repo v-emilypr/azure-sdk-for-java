@@ -16,8 +16,8 @@ param (
     [ValidatePattern('^[-a-zA-Z0-9\.\(\)_]{0,80}(?<=[a-zA-Z0-9\(\)])$')]
     [string] $BaseName,
 
-    [Parameter(ParameterSetName = 'ResourceGroup', Mandatory = $true)]
-    [Parameter(ParameterSetName = 'ResourceGroup+Provisioner', Mandatory = $true)]
+    [Parameter(ParameterSetName = 'ResourceGroup')]
+    [Parameter(ParameterSetName = 'ResourceGroup+Provisioner')]
     [string] $ResourceGroupName,
 
     [Parameter(ParameterSetName = 'Default+Provisioner', Mandatory = $true)]
@@ -48,6 +48,10 @@ param (
     [ValidateSet('AzureCloud', 'AzureUSGovernment', 'AzureChinaCloud', 'Dogfood')]
     [string] $Environment = 'AzureCloud',
 
+    [Parameter(ParameterSetName = 'ResourceGroup')]
+    [Parameter(ParameterSetName = 'ResourceGroup+Provisioner')]
+    [switch] $CI,
+
     [Parameter()]
     [switch] $Force,
 
@@ -73,6 +77,7 @@ trap {
     $exitActions.Invoke()
 }
 
+. $PSScriptRoot/SubConfig-Helpers.ps1
 # Source helpers to purge resources.
 . "$PSScriptRoot\..\scripts\Helpers\Resource-Helpers.ps1"
 
@@ -126,6 +131,16 @@ if ($ProvisionerApplicationId) {
 $context = Get-AzContext
 
 if (!$ResourceGroupName) {
+    if ($CI) {
+        $envVarName = BuildServiceDirectoryPrefix (GetServiceName $ServiceDirectory)
+        $ResourceGroupName = [Environment]::GetEnvironmentVariable($envVarName)
+        if (!$ResourceGroupName) {
+            Write-Error "Could not find resource group name environment variable '$envVarName'"
+            exit 1
+        }
+        return
+    }
+
     # Make sure $BaseName is set.
     if (!$BaseName) {
         $UserName = if ($env:USER) { $env:USER } else { "${env:USERNAME}" }

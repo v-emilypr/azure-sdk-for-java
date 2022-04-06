@@ -517,13 +517,7 @@ try {
         $ProvisionerApplicationOid = $sp.Id
     }
 
-    # If the ServiceDirectory has multiple segments use the last directory name
-    # e.g. D:\foo\bar -> bar or foo/bar -> bar
-    $serviceName = if (Split-Path $ServiceDirectory) {
-        Split-Path -Leaf $ServiceDirectory
-    } else {
-        $ServiceDirectory.Trim('/')
-    }
+    $serviceName = GetServiceName $ServiceDirectory
 
     $ResourceGroupName = if ($ResourceGroupName) {
         $ResourceGroupName
