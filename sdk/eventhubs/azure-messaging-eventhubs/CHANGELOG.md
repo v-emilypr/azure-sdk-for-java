@@ -1,5 +1,14 @@
 # Release History
 
+## 5.11.2 (2022-04-06)
+
+### Other Changes
+
+#### Dependency Updates
+
+- Upgraded `azure-core` from `1.26.0` to version `1.27.0`.
+- Upgraded `azure-core-amqp` from `2.4.1` to version `2.4.2`.
+
 ## 5.11.1 (2022-03-17)
 
 ### Features Added
