@@ -1,5 +1,15 @@
 # Release History
 
+## 7.7.1 (2022-04-06)
+
+### Other Changes
+
+#### Dependency Updates
+
+- Upgraded `azure-core-amqp` from `2.4.1` to version `2.4.2`.
+- Upgraded `azure-core-http-netty` from `1.11.8` to version `1.11.9`.
+- Upgraded `azure-core` from `1.26.0` to version `1.27.0`.
+
 ## 7.7.0 (2022-03-17)
 ### Features Added
 - Added support for sending/receiving messages with `Duration`, `OffsetDateTime` and `URI` in `applicationProperties`.
