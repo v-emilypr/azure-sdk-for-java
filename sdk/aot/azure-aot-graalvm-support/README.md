@@ -1,7 +1,6 @@
 # Azure GraalVM Support client library for Java
 
-The Azure GraalVM Support client library provides support for applications using [Azure client libraries](https://azure.
-github.io/azure-sdk/releases/latest/java.html) to be built as [GraalVM native 
+The Azure GraalVM Support client library provides support for applications using [Azure client libraries](https://azure.github.io/azure-sdk/releases/latest/java.html) to be built as [GraalVM native 
 images](https://www.graalvm.org/22.0/reference-manual/native-image/). The library contains all the necessary 
 [configuration files](https://www.graalvm.org/22.0/reference-manual/native-image/BuildConfiguration/) and [GraalVM 
 features](https://www.graalvm.org/sdk/javadoc/index.html?org/graalvm/nativeimage/hosted/Feature.html) required to build 
