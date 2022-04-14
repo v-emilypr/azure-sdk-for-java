@@ -264,7 +264,7 @@ if ($LASTEXITCODE -ne 0) {
     LogError "Could not correctly get the current branch name."
     exit 1
 }
-# UpdateCIInformation -ArtifactsToPatch $ArtifactsToPatch.Keys -ArtifactInfos $ArtifactInfos
+UpdateCIInformation -ArtifactsToPatch $ArtifactsToPatch.Keys -ArtifactInfos $ArtifactInfos
 
 $fileContent = [System.Text.StringBuilder]::new()
 $fileContent.AppendLine("BranchName;ArtifactId");
