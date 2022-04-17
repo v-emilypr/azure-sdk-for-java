@@ -1,6 +1,14 @@
 ## Release History
 
-## 1.0.1 (2022-04-14)
+## 1.0.2 (2022-04-16)
+
+### Other Changes
+
+#### Dependency Updates
+
+- Upgraded `azure-cosmos` from `4.28.1` to version `4.28.2`.
+
+### 1.0.1 (2022-04-14)
 
 ### Other Changes
 
