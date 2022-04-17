@@ -1,5 +1,15 @@
 # Release History
 
+## 12.16.1 (2022-04-16)
+
+### Other Changes
+
+#### Dependency Updates
+
+- Upgraded `azure-storage-internal-avro` from `12.2.1` to version `12.2.2`.
+- Upgraded `azure-storage-common` from `12.15.1` to version `12.15.2`.
+- Upgraded `azure-core` from `1.27.0` to version `1.28.0`.
+
 ## 12.16.0 (2022-04-07)
 
 ### Bugs Fixed
