@@ -285,7 +285,7 @@ foreach ($patchSet in $ReleaseSets) {
         $patchInfos | ForEach-Object { $artifactIds += $_.ArtifactId }
         $patch = @{
             Artifacts = $artifactIds
-            BranchName = $Branch
+            BranchName = $remoteBranchName
         }
         $patches += $patch
     }
