@@ -1,5 +1,14 @@
 # Release History
 
+## 11.4.10 (2022-04-16)
+
+### Other Changes
+
+#### Dependency Updates
+
+- Upgraded `azure-core-serializer-json-jackson` from `1.2.15` to version `1.2.16`.
+- Upgraded `azure-core` from `1.27.0` to version `1.28.0`.
+
 ## 11.4.9 (2022-04-08)
 
 ### Other Changes
